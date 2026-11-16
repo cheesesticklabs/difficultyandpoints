@@ -12,5 +12,6 @@ Submission code is prepared. Deploy the separate Code.gs in the spreadsheet and 
 
 Add the chosen page passwords to lesson-passwords.js.
 Passwords ignore capitalization; each unlocks its page and every earlier page.
-Passwords are currently unset, so all lesson pages are available.
+Password checkpoints are active. Master unlock: hoagie. See lesson-passwords.js for the seven page checkpoints.
+
 
