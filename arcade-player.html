@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ms. Pac-Man · Arcade player</title><style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#101c2d;color:#e0e8f4;font:16px/1.5 'Segoe UI',sans-serif;padding:18px}h1{font-size:21px;margin:0}p{margin:8px 0}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.controls{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}button{font:700 14px 'Segoe UI',sans-serif;background:#4e86d8;color:white;border:0;border-radius:8px;min-height:44px;padding:10px 16px;cursor:pointer}button:disabled{opacity:.45;cursor:default}button:focus-visible{outline:3px solid #efc24f;outline-offset:3px}#game{height:min(72vh,690px);min-height:460px;background:#000;border-radius:9px;overflow:hidden}#status{font-size:13px;color:#c1cede;min-height:24px}.hint{font-size:13px;color:#acbdd3}.ejs_parent{border-radius:9px}
+</style></head><body>
+<div class="top"><h1>Ms. Pac-Man · Arcade</h1><span class="hint">Arrow keys to move · 5: coin · Enter: start</span></div>
+<div class="controls"><button id="load">Load Ms. Pac-Man</button><button id="coin" disabled>Insert quarter</button><button id="start" disabled>Start game</button><button id="restart">Restart machine</button></div>
+<div id="game"></div><p id="status" role="status">Load the game, insert a quarter, then press Start.</p>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);let loading=false,timer=null;
+function pulse(button){const manager=window.EJS_emulator?.gameManager;if(!manager)return;manager.simulateInput(0,button,1);setTimeout(()=>manager.simulateInput(0,button,0),150);$('game').querySelector('canvas')?.focus();}
+$('coin').onclick=()=>pulse(2);$('start').onclick=()=>pulse(3);$('restart').onclick=()=>location.reload();
+$('load').onclick=async()=>{if(loading)return;loading=true;$('load').disabled=true;$('status').textContent='Loading the arcade emulator…';
+let romUrl;try{const response=await fetch('https://e6fd7b29-ac63-4bf1-9610-cb8d087f3e70.usrfiles.com/archives/e6fd7b_76978f7620c042dcb9dd862d0d67de36.zip',{credentials:'omit'});if(!response.ok)throw Error('HTTP '+response.status);romUrl=URL.createObjectURL(await response.blob());}catch(error){loading=false;$('load').disabled=false;$('status').textContent='Could not load the hosted game. '+error.message;return;}
+Object.assign(window,{EJS_player:'#game',EJS_core:'fbneo',EJS_gameUrl:romUrl,EJS_gameName:'mspacman.zip',EJS_pathtodata:new URL('vendor/emulatorjs/',location.href).href,EJS_startOnLoaded:true,EJS_threads:false,EJS_disableLocalStorage:true,EJS_language:'en-US',EJS_color:'#4e86d8'});
+const keys=Object.fromEntries(Array.from({length:30},(_,i)=>[i,{value:'',value2:''}]));for(const [i,key]of [[2,'5'],[3,'enter'],[4,'up arrow'],[5,'down arrow'],[6,'left arrow'],[7,'right arrow']])keys[i]={value:key,value2:''};window.EJS_defaultControls={0:keys,1:{},2:{},3:{}};
+window.EJS_Buttons={playPause:true,restart:true,mute:true,fullscreen:true,settings:false,saveState:false,loadState:false,gamepad:false,cheat:false,volume:true,saveSavFiles:false,loadSavFiles:false,quickSave:false,quickLoad:false,screenshot:false,cacheManager:false,exitEmulation:false,screenRecord:false};
+window.EJS_onGameStart=()=>{clearTimeout(timer);$('coin').disabled=false;$('start').disabled=false;$('load').hidden=true;$('status').textContent='Arcade machine ready. Insert a quarter, then Start. Use the arrow keys to move.';};
+const script=document.createElement('script');script.src='vendor/emulatorjs/loader.js';script.onerror=()=>{$('status').textContent='Emulator could not load. Restart the machine to try again.';};document.body.append(script);timer=setTimeout(()=>{$('status').textContent='Still loading. If the game does not appear, restart the machine.';},60000);
+};
+})();
+</script></body></html>

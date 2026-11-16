@@ -1,0 +1,210 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>missile-command</title><style>html,body{margin:0;padding:0;background:transparent}body{padding:4px}header,footer{display:none!important}.content{padding:0!important}.rules-grid{padding-bottom:12px}#game-builder-checkboxes,#missile-command-builder{border-radius:0;background:transparent}body:has([data-playtest]) .rules-grid{display:none!important}
+/* The same game has two independently editable versions. */
+#game-builder-checkboxes .topline .tabs,#missile-command-builder .topline .tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%}
+#game-builder-checkboxes .tabs button,#missile-command-builder .tabs button{min-height:64px;font-size:21px;padding:15px 24px;border-width:2px}
+#game-builder-checkboxes .tabs button[aria-pressed=true],#missile-command-builder .tabs button[aria-pressed=true]{border-color:#253a54;box-shadow:0 3px 0 #253a54}
+#game-builder-checkboxes .topline,#missile-command-builder .topline{align-items:stretch}
+</style></head><body><div id="missile-command-builder">
+<style>
+#missile-command-builder{--paper:light-dark(#fff,#202d3e);--ink:light-dark(#253a54,#e0e8f4);--soft:light-dark(#eef2f7,#151e2b);--line:light-dark(#d9e1ec,#43546d);font:15px/1.5 'Segoe UI',sans-serif;color:var(--ink);background:var(--soft);border-radius:18px;overflow:hidden}
+#missile-command-builder *{box-sizing:border-box}
+#missile-command-builder header{background:#253a54;color:#fff;padding:20px 24px;display:flex;align-items:center;gap:20px;justify-content:space-between}
+#missile-command-builder .brand{display:inline-block;background:#204eaa;border:3px solid #111;border-radius:16px 20px 15px 20px;box-shadow:3px 4px #111;padding:4px 12px;color:#fff;font-weight:800;transform:rotate(-1deg);margin-bottom:12px}
+#missile-command-builder h2{font-size:24px;line-height:1.2;margin:4px 0;font-weight:800;color:inherit}
+#missile-command-builder h3{font-size:18px;font-weight:700;margin:0}
+#missile-command-builder p{margin:0}
+#missile-command-builder .series{font-size:12px;color:#c1cede}
+#missile-command-builder .tag{font-size:12px;color:#fff;background:#465a75;padding:5px 10px;border-radius:7px}
+#missile-command-builder .content{padding:24px}
+#missile-command-builder .topline{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+#missile-command-builder .tabs{display:flex;gap:8px}
+#missile-command-builder button{font:700 14px 'Segoe UI',sans-serif;min-height:42px;padding:9px 16px;border:1px solid var(--line);border-radius:9px;color:var(--ink);background:var(--paper)}
+#missile-command-builder button[aria-pressed=true],#missile-command-builder .primary{background:#4e86d8;color:#fff;border-color:#4e86d8}
+#missile-command-builder button:focus-visible,#missile-command-builder input:focus-visible,#missile-command-builder select:focus-visible{outline:3px solid #efc24f;outline-offset:3px}
+#missile-command-builder .workspace{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(240px,1fr);gap:22px;align-items:start}
+#missile-command-builder .play{min-width:0}
+#missile-command-builder .screen{background:#101c2d;color:#e0e8f4;border:3px solid #111;border-radius:13px;overflow:hidden}
+#missile-command-builder .hud{display:flex;justify-content:space-between;gap:10px;padding:12px 16px;font:700 12px 'Segoe UI',sans-serif;flex-wrap:wrap}
+#missile-command-builder canvas{display:block;width:100%;height:auto;touch-action:none}
+#missile-command-builder .play-actions{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}
+#missile-command-builder .movement{display:flex;gap:6px}
+#missile-command-builder .small{font-size:12px;color:light-dark(#63748b,#acbdd3)}
+#missile-command-builder .status{margin-top:10px;min-height:36px}
+#missile-command-builder .rules{background:var(--paper);padding:20px;border:1px solid var(--line);border-radius:13px}
+#missile-command-builder label{display:grid;gap:6px;margin-top:15px;font-size:14px;font-weight:600}
+#missile-command-builder .label-row{display:flex;justify-content:space-between;gap:10px}
+#missile-command-builder input[type=number],#missile-command-builder select{font:400 14px 'Segoe UI',sans-serif;width:100%;min-height:39px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:7px;padding:7px 10px}
+#missile-command-builder input[type=range]{width:100%;accent-color:#4e86d8}
+#missile-command-builder .compare{margin-top:22px;border-left:5px solid #efc24f;background:var(--paper);padding:14px 18px;border-radius:0 10px 10px 0}
+#missile-command-builder .compare p{margin-top:5px}
+#missile-command-builder footer{text-align:center;padding:0 12px 18px;font-size:12px;color:light-dark(#63748b,#acbdd3)}
+@media(max-width:650px){#missile-command-builder .workspace{grid-template-columns:1fr}#missile-command-builder .content{padding:16px}#missile-command-builder header{padding:16px}#missile-command-builder header .tag{display:none}}
+#missile-command-builder .screen{position:relative}
+#missile-command-builder .name-entry{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center;background:#101c2d;color:#e0e8f4;font-family:monospace}
+#missile-command-builder .name-entry[hidden]{display:none}
+#missile-command-builder .name-entry h3{color:#efc24f;font:700 23px monospace}
+#missile-command-builder .name-entry label{margin:0;color:#e0e8f4}
+#missile-command-builder .name-entry input{width:150px;min-height:52px;text-align:center;letter-spacing:10px;text-transform:uppercase;font:700 28px monospace;color:#efc24f;background:#172b45;border:2px solid #9cbcf2;border-radius:6px}
+#missile-command-builder .name-entry button{color:#101c2d;background:#efc24f;border:0}
+#missile-command-builder [hidden]{display:none!important}
+#missile-command-builder .check-rule{display:flex;align-items:center;gap:10px;font-weight:700}
+#missile-command-builder .check-rule input{width:19px;height:19px;accent-color:#4e86d8;margin:0}
+#missile-command-builder .rule-detail{margin-top:9px;padding-left:29px}
+#missile-command-builder .workspace{display:flex;flex-direction:column;gap:18px}
+#missile-command-builder .play{width:100%;max-width:720px;margin:0 auto}
+#missile-command-builder .rules-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;width:100%;align-items:start}
+#missile-command-builder .rules{min-width:0;padding:18px;border-top:4px solid #8f79d8}
+#missile-command-builder .rules:nth-child(2){border-top-color:#efc24f}
+#missile-command-builder .rules:nth-child(3){border-top-color:#4e86d8}
+#missile-command-builder .rules .check-rule{margin:0;min-height:27px}
+#missile-command-builder .rules .rule-detail{padding:0;margin-top:15px}
+#missile-command-builder .end-buttons{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+@media(max-width:700px){#missile-command-builder .rules-grid{grid-template-columns:1fr}}
+#missile-command-builder .rules-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+#missile-command-builder .rules:nth-child(4){border-top-color:#2e9c70}
+@media(max-width:900px){#missile-command-builder .rules-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:550px){#missile-command-builder .rules-grid{grid-template-columns:1fr}}
+#missile-command-builder .rules-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+#missile-command-builder .rules-stack{display:grid;gap:16px;min-width:0}
+#missile-command-builder .rules[aria-label="Lives rules"]{border-top-color:#8f79d8}
+#missile-command-builder .rules[aria-label="Scoring rules"]{border-top-color:#efc24f}
+#missile-command-builder .rules[aria-label="Challenge rules"]{border-top-color:#4e86d8}
+#missile-command-builder .rules[aria-label="Other Rules"]{border-top-color:#2e9c70}
+@media(max-width:650px){#missile-command-builder .rules-grid{grid-template-columns:1fr}}
+#missile-command-builder .rules-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:900px){#missile-command-builder .rules-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:550px){#missile-command-builder .rules-grid{grid-template-columns:1fr}}
+</style>
+<header><div><div class="brand">Cheesestick Labs</div><div class="series">Video Games: Their History and Design</div><h2>What's The Point(s)?</h2></div><span class="tag">Builder preview</span></header>
+<div class="content">
+<div class="topline"><div><h3>Build your Missile Command</h3><p class="small">Game B · Table 5</p></div><div class="tabs" aria-label="Version"><button type="button" class="cursor-interaction" data-mode="arcade" aria-pressed="true">Arcade</button><button type="button" class="cursor-interaction" data-mode="home" aria-pressed="false">Home</button></div></div>
+<div class="workspace">
+<section class="play" aria-label="Playable game preview"><div class="screen"><div class="hud"><span data-hud="score">SCORE 0</span><span data-hud="lives">CITIES 6</span><span data-hud="wave">WAVE 1</span><span data-hud="ammo">AMMO 20</span></div><canvas width="600" height="365" aria-label="Missile Command preview. Aim and click to intercept incoming missiles."></canvas><form class="name-entry" data-name-entry hidden><h3>ENTER YOUR INITIALS</h3><p data-run-score></p><label>3 letters<input data-initials aria-label="Your three initials" maxlength="3" minlength="3" pattern="[A-Za-z]{3}" autocomplete="off" required placeholder="___"></label><button class="cursor-interaction" type="submit">Add to high scores</button></form><section class="name-entry" data-end-screen hidden aria-label="End of game"><h3 data-end-title>GAME OVER</h3><p data-end-score></p><div class="end-buttons"><button type="button" class="cursor-interaction" data-end-continue>Insert quarter to continue</button><button type="button" class="cursor-interaction" data-end-finish>High scores</button></div></section></div>
+<div class="play-actions"><button type="button" class="primary cursor-interaction" data-action="start">Play test</button><div class="movement"><span class="small">Aim and click · Arrows + Space also work</span><button type="button" class="cursor-interaction" data-action="fire">Fire</button></div></div>
+<p class="small status" aria-live="polite" data-status>Choose your rules, then enter a simulated quarter to start.</p></section>
+<div class="rules-grid">
+<section class="rules" aria-label="City rules">
+<label class="check-rule"><input type="checkbox" data-setting="limitedCities" checked>Cities can be destroyed</label>
+<div data-city-detail>
+<label>Starting cities<input type="number" data-setting="cities" min="3" max="6" value="6"></label>
+<label data-extra-city-detail>Restore one lost city<select data-setting="extraCityEvery"><option value="0">No score reward</option><option value="1000">Every 1,000 points</option><option value="3000">Every 3,000 points</option><option value="5000">Every 5,000 points</option></select></label>
+<label>Between waves, cities<select data-setting="cityReset"><option value="never">Stay destroyed</option><option value="wave">Rebuild completely</option></select></label>
+</div>
+</section>
+<section class="rules" aria-label="Scoring rules">
+<label class="check-rule"><input type="checkbox" data-setting="useScore" checked>Use a score</label>
+<div data-score-detail>
+<label>Missile points<select data-setting="pointsMode"><option value="flat">Same for every missile</option><option value="chain">More for chain reactions</option></select></label>
+<label>Points per missile<input type="number" data-setting="points" min="10" max="1000" step="10" value="100"></label>
+<p class="small" data-chain-detail hidden>Chain reactions: ×2, then ×3 points</p>
+<label>Wave bonus per surviving city<input type="number" data-setting="cityBonus" min="0" max="1000" step="50" value="100"></label>
+</div>
+</section>
+<section class="rules" aria-label="Challenge rules"><h3>Challenge</h3>
+<label><span class="label-row"><span>Missile speed</span><output data-speed-label>2 / 5</output></span><input type="range" data-setting="speed" min="1" max="5" value="2"></label>
+<label>Speed change after each wave<select data-setting="ramp"><option value="0">Stay the same</option><option value="10">10% faster</option><option value="25">25% faster</option></select></label>
+<label>Incoming missile frequency<select data-setting="fireRate"><option value="1.8">Low</option><option value="1.1">Medium</option><option value="0.55">High</option></select></label>
+<label>Explosion size<select data-setting="blastRadius"><option value="24">Small</option><option value="40">Medium</option><option value="60">Large</option></select></label>
+<label class="check-rule" style="margin-top:15px"><input type="checkbox" data-setting="limitedAmmo" checked>Use limited ammo</label>
+<label data-ammo-detail>Shots per wave<input type="number" data-setting="ammo" min="5" max="60" value="20"></label>
+</section>
+<section class="rules" aria-label="Other Rules"><h3>Other Rules</h3>
+<label>After losing, show<select data-setting="endScreen"><option value="gameover">Game Over</option><option value="scores">High scores</option><option value="both">Game Over, then high scores</option><option value="title">Return to start screen</option></select></label>
+<label>Allow continuing?<select data-setting="failure"><option value="restart">No — start a new game</option><option value="continue">Yes — insert a quarter</option></select></label>
+<div data-continue-detail>
+<label>Continue from<select data-setting="continueAt"><option value="current">Current wave</option><option value="restart">Wave 1</option></select></label>
+<label data-continue-score-detail>Score when continuing<select data-setting="continueScore"><option value="keep">Keep it</option><option value="reset">Reset to zero</option></select></label>
+</div>
+</section></div>
+</div>
+</div><footer>By Cheesestick Labs</footer>
+<script>
+(()=>{
+const params=new URLSearchParams(location.search),period=params.get('period')||'',group=params.get('group')||'',game=location.pathname.includes('space-invaders')?'a':'b',playtest=params.get('playtest')==='1';
+const key='cheesestick-build-'+period+'-'+group+'-'+game;
+let snapshot=null;try{snapshot=JSON.parse(playtest?decodeURIComponent(location.hash.slice(1)):localStorage.getItem(key)||'null');}catch{}
+if(snapshot?.modelContent?.versions){
+const clean={};for(const mode of ['arcade','home']){clean[mode]={};const config=snapshot.modelContent.versions[mode]||{};document.querySelectorAll('[data-setting]').forEach(el=>{const k=el.dataset.setting,v=config[k];if(v===undefined)return;if(el.type==='checkbox'){if(typeof v==='boolean')clean[mode][k]=v;}else if(el.tagName==='SELECT'){if([...el.options].some(o=>o.value===String(v)))clean[mode][k]=v;}else{const n=Number(v),min=el.min?Number(el.min):0,max=el.max?Number(el.max):10000;if(Number.isFinite(n)&&n>=min&&n<=max)clean[mode][k]=n;}});}
+snapshot={modelContent:{...snapshot.modelContent,mode:snapshot.modelContent.mode==='home'?'home':'arcade',versions:clean},privateContent:{homeBest:Math.max(0,Math.min(1e9,Number(snapshot.privateContent?.homeBest)||0))}};
+}
+window.openai={widgetState:snapshot,setWidgetState:async value=>{window.openai.widgetState=value;if(!playtest){try{localStorage.setItem(key,JSON.stringify(value));}catch{}}}};
+document.documentElement.style.colorScheme=params.get('theme')==='dark'?'dark':'light';
+const groupLine=document.querySelector('.topline .small');if(groupLine)groupLine.textContent=(playtest?'Playtest · ':'')+'Period '+period+' · Group '+group+' · Game '+game.toUpperCase();
+const postHeight=()=>parent.postMessage({type:'builder-height',height:Math.ceil(document.body.getBoundingClientRect().height)},location.origin);
+new ResizeObserver(postHeight).observe(document.body);window.addEventListener('load',postHeight);
+if(playtest)document.querySelectorAll('[data-setting]').forEach(el=>el.disabled=true);
+})();
+</script>
+<script>
+(()=>{
+const root=document.getElementById('missile-command-builder'),$=s=>root.querySelector(s),canvas=$('canvas'),ctx=canvas.getContext('2d');
+const shared={limitedCities:true,cities:6,extraCityEvery:0,cityReset:'never',useScore:true,points:100,pointsMode:'flat',cityBonus:100,speed:2,ramp:10,fireRate:1.1,blastRadius:40,limitedAmmo:true,ammo:20,endScreen:'both',failure:'restart',continueAt:'current',continueScore:'keep'};
+const defaults={arcade:{...shared},home:{...shared,cityReset:'wave',limitedAmmo:false,endScreen:'gameover',failure:'continue'}};
+let mode='arcade',versions=structuredClone(defaults),homeBest=0,board=[{name:'OZZ',score:12000},{name:'MTY',score:8500},{name:'PNO',score:6200}],lastEntry=null;
+let running=false,blocked=false,raf=0,last=0,score=0,wave=1,ammo=20,cities=[],incoming=[],outgoing=[],blasts=[],launched=0,spawnClock=0,waveClock=0,rewardProgress=0,aim={x:300,y:150};
+const positions=[55,135,215,385,465,545],status=$('[data-status]');
+function applyState(value){if(value?.modelContent?.game==='missile-command'&&value.modelContent.versions){mode=value.modelContent.mode==='home'?'home':'arcade';for(const m of ['arcade','home'])versions[m]={...defaults[m],...value.modelContent.versions[m]};homeBest=Math.max(homeBest,Number(value.privateContent?.homeBest)||0);}}
+applyState(window.openai?.widgetState);
+function persist(){window.openai?.setWidgetState?.({modelContent:{game:'missile-command',mode,versions},privateContent:{homeBest}}).catch(()=>{});}
+function living(){return cities.filter(c=>c.alive).length;}
+function rebuildCities(){cities=positions.slice(0,Number(versions[mode].cities)).map(x=>({x,alive:true}));}
+function freshWave(){incoming=[];outgoing=[];blasts=[];launched=0;spawnClock=0;waveClock=0;ammo=Number(versions[mode].ammo);}
+function hud(){const s=versions[mode];$('[data-hud=score]').hidden=!s.useScore;$('[data-hud=score]').textContent='SCORE '+score;$('[data-hud=lives]').textContent='CITIES '+living();$('[data-hud=wave]').textContent='WAVE '+wave;$('[data-hud=ammo]').textContent=s.limitedAmmo?'AMMO '+ammo:'AMMO ∞';}
+function recordPoints(amount){const s=versions[mode];if(!s.useScore||amount<=0)return;score+=amount;if(mode==='home'&&score>homeBest){homeBest=score;persist();}if(s.limitedCities&&Number(s.extraCityEvery)>0){rewardProgress+=amount;while(rewardProgress>=Number(s.extraCityEvery)){rewardProgress-=Number(s.extraCityEvery);const lost=cities.find(c=>!c.alive);if(lost){lost.alive=true;status.textContent='Score reward: one city restored!';}}}}
+function title(){
+ctx.fillStyle='#101c2d';ctx.fillRect(0,0,600,365);ctx.textAlign='center';
+if(mode==='arcade'){
+if(versions[mode].useScore){ctx.fillStyle='#efc24f';ctx.font='700 15px monospace';ctx.fillText('HIGH SCORES',300,35);ctx.font='16px monospace';ctx.fillStyle='#e0e8f4';board.slice(0,3).forEach((r,i)=>ctx.fillText(['1ST','2ND','3RD'][i]+'   '+r.name+'   '+String(r.score).padStart(6,'0'),300,72+i*29));if(lastEntry){ctx.fillStyle='#efc24f';ctx.font='14px monospace';ctx.fillText('YOUR SCORE   '+lastEntry.name+'   '+lastEntry.score,300,166);}}
+else{ctx.fillStyle='#9cbcf2';ctx.font='700 22px monospace';ctx.fillText('PROTECT YOUR CITIES',300,100);}
+ctx.fillStyle='#9cbcf2';ctx.font='700 28px monospace';ctx.fillText('MISSILE COMMAND',300,212);ctx.fillStyle='#efc24f';ctx.font='700 18px monospace';ctx.fillText(living()===0&&versions[mode].failure==='continue'?'INSERT COIN TO CONTINUE':'ENTER QUARTER TO START',300,260);ctx.font='14px monospace';ctx.fillStyle='#acbdd3';ctx.fillText('AIM AND CLICK TO DEFEND THE CITIES',300,299);ctx.fillText('SIMULATED QUARTER · NO REAL PAYMENT',300,334);
+}else{ctx.fillStyle='#9cbcf2';ctx.font='700 32px monospace';ctx.fillText('MISSILE',300,104);ctx.fillText('COMMAND',300,148);if(versions[mode].useScore){ctx.fillStyle='#efc24f';ctx.font='15px monospace';ctx.fillText('YOUR TOP SCORE: '+homeBest,300,192);}ctx.font='700 19px monospace';ctx.fillStyle='#efc24f';ctx.fillText('PRESS SPACE TO START!',300,251);ctx.font='14px monospace';ctx.fillStyle='#acbdd3';ctx.fillText('AIM AND CLICK TO DEFEND THE CITIES',300,296);}
+}
+function draw(){if(!running){title();return;}ctx.fillStyle='#101c2d';ctx.fillRect(0,0,600,365);ctx.fillStyle='#273b55';for(let i=0;i<35;i++)ctx.fillRect((i*137+19)%600,(i*73+11)%300,2,2);
+ctx.strokeStyle='#f28c83';ctx.lineWidth=1.5;incoming.forEach(m=>{ctx.beginPath();ctx.moveTo(m.ox,m.oy);ctx.lineTo(m.x,m.y);ctx.stroke();ctx.fillStyle='#f3b4a8';ctx.fillRect(m.x-2,m.y-2,4,4);});
+ctx.strokeStyle='#9cbcf2';outgoing.forEach(m=>{ctx.beginPath();ctx.moveTo(300,331);ctx.lineTo(m.x,m.y);ctx.stroke();});
+blasts.forEach(b=>{ctx.beginPath();ctx.arc(b.x,b.y,b.radius,0,Math.PI*2);ctx.fillStyle=b.depth?'#efb85355':'#9cbcf255';ctx.fill();ctx.strokeStyle=b.depth?'#efc24f':'#b8d4ff';ctx.stroke();});
+ctx.fillStyle='#344b68';ctx.fillRect(0,346,600,19);
+cities.forEach((c,i)=>{if(c.alive){ctx.fillStyle='#76c99a';for(let j=0;j<5;j++)ctx.fillRect(c.x-21+j*9,330-(j%3)*5,7,16+(j%3)*5);ctx.fillStyle='#e0e8f4';ctx.font='10px monospace';ctx.textAlign='center';ctx.fillText(String(i+1),c.x,361);}else{ctx.fillStyle='#58657a';ctx.fillRect(c.x-20,342,13,4);ctx.fillRect(c.x+3,339,15,7);}});
+ctx.fillStyle='#9cbcf2';ctx.beginPath();ctx.moveTo(275,346);ctx.lineTo(286,325);ctx.lineTo(314,325);ctx.lineTo(325,346);ctx.closePath();ctx.fill();ctx.fillStyle='#efc24f';ctx.fillRect(296,316,8,13);
+ctx.strokeStyle='#efc24f';ctx.lineWidth=1;ctx.beginPath();ctx.arc(aim.x,aim.y,8,0,Math.PI*2);ctx.moveTo(aim.x-13,aim.y);ctx.lineTo(aim.x+13,aim.y);ctx.moveTo(aim.x,aim.y-13);ctx.lineTo(aim.x,aim.y+13);ctx.stroke();}
+function reset(){cancelAnimationFrame(raf);running=false;blocked=false;score=0;wave=1;rewardProgress=0;aim={x:300,y:150};rebuildCities();freshWave();$('[data-name-entry]').hidden=true;$('[data-end-screen]').hidden=true;$('[data-action=start]').disabled=false;$('[data-action=start]').textContent=mode==='arcade'?'Enter quarter to start':'Press Space to start!';hud();draw();}
+function render(){const s=versions[mode];$('[data-city-detail]').hidden=!s.limitedCities;$('[data-extra-city-detail]').hidden=!(s.limitedCities&&s.useScore);$('[data-score-detail]').hidden=!s.useScore;$('[data-chain-detail]').hidden=s.pointsMode!=='chain';$('[data-ammo-detail]').hidden=!s.limitedAmmo;$('[data-continue-detail]').hidden=s.failure!=='continue';$('[data-continue-score-detail]').hidden=!s.useScore;
+const end=$('[data-setting=endScreen]');end.querySelector('[value=scores]').disabled=!s.useScore;end.querySelector('[value=both]').disabled=!s.useScore;end.querySelector('[value=scores]').textContent=mode==='arcade'?'High scores':'Your top score';end.querySelector('[value=both]').textContent=mode==='arcade'?'Game Over, then high scores':'Game Over, then your top score';if(!s.useScore&&['scores','both'].includes(s.endScreen))s.endScreen='gameover';$('[data-setting=failure]').querySelector('[value=continue]').textContent=mode==='arcade'?'Yes — insert a quarter':'Yes — continue for free';
+root.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));root.querySelectorAll('[data-setting]').forEach(el=>{if(el.type==='checkbox')el.checked=!!s[el.dataset.setting];else el.value=s[el.dataset.setting];});$('[data-speed-label]').textContent=s.speed+' / 5';reset();}
+function returnToTitle(){blocked=false;$('[data-name-entry]').hidden=true;$('[data-end-screen]').hidden=true;$('[data-action=start]').disabled=false;draw();}
+function finishRun(){const s=versions[mode];$('[data-end-screen]').hidden=true;if(s.useScore&&['scores','both'].includes(s.endScreen)){blocked=true;if(mode==='arcade'){$('[data-name-entry]').hidden=false;$('[data-run-score]').textContent='YOUR SCORE: '+score;const input=$('[data-initials]');input.value='';input.focus();$('[data-action=start]').disabled=true;}else{$('[data-end-screen]').hidden=false;$('[data-end-title]').textContent='YOUR TOP SCORE';$('[data-end-score]').textContent=homeBest+' · THIS RUN: '+score;$('[data-end-continue]').hidden=s.failure!=='continue';$('[data-end-continue]').textContent='Continue';$('[data-end-finish]').textContent='Return to title';$('[data-end-finish]').onclick=returnToTitle;}return;}returnToTitle();}
+function endRun(){running=false;hud();draw();const s=versions[mode];$('[data-action=start]').textContent=mode==='arcade'?(s.failure==='continue'?'Insert coin to continue':'Enter quarter to start'):'Press Space to start!';if(['gameover','both'].includes(s.endScreen)){blocked=true;$('[data-end-screen]').hidden=false;$('[data-end-title]').textContent='GAME OVER';$('[data-end-score]').textContent=s.useScore?'YOUR SCORE: '+score:'';$('[data-end-continue]').hidden=s.failure!=='continue';$('[data-end-continue]').textContent=mode==='arcade'?'Insert quarter to continue':'Continue';$('[data-end-finish]').textContent=s.endScreen==='both'?(mode==='arcade'?'High scores':'Your top score'):'Return to title';$('[data-end-finish]').onclick=finishRun;$('[data-action=start]').disabled=true;}else finishRun();status.textContent='All cities lost. Your ending and continue rules apply now.';}
+function startTest(){if(blocked)return;if(running){reset();status.textContent='Test reset. Your rules are unchanged.';return;}const s=versions[mode];if(living()===0){const continuing=s.failure==='continue';if(!continuing||s.continueAt==='restart')wave=1;if(!continuing||s.continueScore==='reset'){score=0;rewardProgress=0;}rebuildCities();freshWave();}running=true;last=performance.now();$('[data-action=start]').textContent='Restart test';status.textContent=(mode==='arcade'?'Simulated quarter entered. ':'')+'Aim and click to launch an interceptor.';hud();raf=requestAnimationFrame(tick);}
+function fire(){if(!running)return;const s=versions[mode];if(s.limitedAmmo&&ammo<=0){status.textContent='Out of ammo. Wait for the next wave.';return;}if(s.limitedAmmo)ammo--;outgoing.push({x:300,y:331,tx:aim.x,ty:aim.y});hud();}
+function spawnMissile(){const targets=cities.filter(c=>c.alive);if(!targets.length)return;const city=targets[Math.floor(Math.random()*targets.length)],x=20+Math.random()*560;incoming.push({x,y:0,ox:x,oy:0,tx:city.x,ty:340});launched++;}
+function addBlast(x,y,depth){blasts.push({x,y,depth,age:0,radius:0});}
+function nextWave(){const s=versions[mode];recordPoints(Number(s.cityBonus)*living());wave++;if(s.cityReset==='wave')rebuildCities();freshWave();status.textContent='Wave '+wave+' · Ammo refilled'+(s.cityReset==='wave'?' · Cities rebuilt':'')+'.';}
+function tick(now){if(!running)return;const dt=Math.min((now-last)/1000,.04);last=now;const s=versions[mode];spawnClock+=dt;const total=8+wave*3;if(launched<total&&spawnClock>=Number(s.fireRate)){spawnClock=0;spawnMissile();}
+outgoing=outgoing.filter(m=>{const dx=m.tx-m.x,dy=m.ty-m.y,d=Math.hypot(dx,dy),step=420*dt;if(d<=step){addBlast(m.tx,m.ty,0);return false;}m.x+=dx/d*step;m.y+=dy/d*step;return true;});
+blasts.forEach(b=>{b.age+=dt;b.radius=Number(s.blastRadius)*(b.age<.25?b.age/.25:Math.max(0,1-(b.age-.25)/.85));});blasts=blasts.filter(b=>b.age<1.1);
+const speed=(14+Number(s.speed)*9)*Math.pow(1+Number(s.ramp)/100,wave-1);
+incoming=incoming.filter(m=>{const dx=m.tx-m.x,dy=m.ty-m.y,d=Math.hypot(dx,dy),step=speed*dt;m.x+=dx/Math.max(d,1)*Math.min(d,step);m.y+=dy/Math.max(d,1)*Math.min(d,step);
+const blast=blasts.find(b=>Math.hypot(b.x-m.x,b.y-m.y)<=b.radius+2);
+if(blast){const depth=blast.depth+1;recordPoints(Number(s.points)*(s.pointsMode==='chain'?Math.min(depth,3):1));addBlast(m.x,m.y,depth);return false;}
+if(m.y>=338){const target=cities.find(c=>Math.abs(c.x-m.tx)<5);if(target&&s.limitedCities)target.alive=false;return false;}return true;});
+if(living()===0){endRun();return;}
+if(launched>=total&&!incoming.length&&!outgoing.length){waveClock+=dt;if(waveClock>.9)nextWave();}else waveClock=0;
+hud();draw();raf=requestAnimationFrame(tick);}
+root.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;render();persist();status.textContent='Switched versions. Each keeps its own rules.';});
+const textSettings=new Set(['cityReset','pointsMode','endScreen','failure','continueAt','continueScore']);
+root.querySelectorAll('[data-setting]').forEach(el=>el.onchange=()=>{let value=el.type==='checkbox'?el.checked:el.value;const key=el.dataset.setting;if(el.type!=='checkbox'&&!textSettings.has(key)){value=Number(value);if(!Number.isFinite(value))return;if(el.min)value=Math.max(Number(el.min),value);if(el.max)value=Math.min(Number(el.max),value);}versions[mode][key]=value;render();persist();status.textContent='Rules updated. Test reset with your new settings.';});
+$('[data-action=start]').onclick=startTest;$('[data-action=fire]').onclick=fire;
+$('[data-end-continue]').onclick=()=>{blocked=false;$('[data-end-screen]').hidden=true;$('[data-action=start]').disabled=false;startTest();};
+$('[data-name-entry]').onsubmit=e=>{e.preventDefault();const input=$('[data-initials]'),name=input.value.toUpperCase();if(!/^[A-Z]{3}$/.test(name))return;lastEntry={name,score};board.push(lastEntry);board.sort((a,b)=>b.score-a.score);returnToTitle();status.textContent='Score recorded. Enter another simulated quarter to play.';};
+$('[data-initials]').oninput=e=>e.target.value=e.target.value.replace(/[^a-z]/gi,'').toUpperCase();
+function pointer(e){const r=canvas.getBoundingClientRect();aim={x:Math.max(10,Math.min(590,(e.clientX-r.left)*600/r.width)),y:Math.max(15,Math.min(310,(e.clientY-r.top)*365/r.height))};}
+canvas.onpointermove=pointer;canvas.onpointerdown=e=>{e.preventDefault();pointer(e);fire();};
+let active=false;root.onpointerenter=()=>active=true;root.onpointerleave=()=>active=false;
+document.addEventListener('keydown',e=>{if(!active||/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName))return;if(!['Space','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.code))return;e.preventDefault();if(e.code==='Space'){if(running)fire();else if(mode==='home'&&!e.repeat)startTest();return;}aim.x=Math.max(10,Math.min(590,aim.x+(e.code==='ArrowRight'?15:e.code==='ArrowLeft'?-15:0)));aim.y=Math.max(15,Math.min(310,aim.y+(e.code==='ArrowDown'?15:e.code==='ArrowUp'?-15:0)));});
+window.addEventListener('openai:set_globals',e=>{applyState(e.detail?.globals?.widgetState);render();});
+render();persist();
+})();
+
+</script>
+</div>
+<script>if(new URLSearchParams(location.search).get('playtest')==='1'){document.body.setAttribute('data-playtest','');document.querySelector('.rules-grid').hidden=true;}</script></body></html>

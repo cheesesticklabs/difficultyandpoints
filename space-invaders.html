@@ -1,0 +1,358 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>space-invaders</title><style>html,body{margin:0;padding:0;background:transparent}body{padding:4px}header,footer{display:none!important}.content{padding:0!important}.rules-grid{padding-bottom:12px}#game-builder-checkboxes,#missile-command-builder{border-radius:0;background:transparent}body:has([data-playtest]) .rules-grid{display:none!important}
+/* The same game has two independently editable versions. */
+#game-builder-checkboxes .topline .tabs,#missile-command-builder .topline .tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%}
+#game-builder-checkboxes .tabs button,#missile-command-builder .tabs button{min-height:64px;font-size:21px;padding:15px 24px;border-width:2px}
+#game-builder-checkboxes .tabs button[aria-pressed=true],#missile-command-builder .tabs button[aria-pressed=true]{border-color:#253a54;box-shadow:0 3px 0 #253a54}
+#game-builder-checkboxes .topline,#missile-command-builder .topline{align-items:stretch}
+</style></head><body><div id="game-builder-checkboxes">
+<style>
+#game-builder-checkboxes{--paper:light-dark(#fff,#202d3e);--ink:light-dark(#253a54,#e0e8f4);--soft:light-dark(#eef2f7,#151e2b);--line:light-dark(#d9e1ec,#43546d);font:15px/1.5 'Segoe UI',sans-serif;color:var(--ink);background:var(--soft);border-radius:18px;overflow:hidden}
+#game-builder-checkboxes *{box-sizing:border-box}
+#game-builder-checkboxes header{background:#253a54;color:#fff;padding:20px 24px;display:flex;align-items:center;gap:20px;justify-content:space-between}
+#game-builder-checkboxes .brand{display:inline-block;background:#204eaa;border:3px solid #111;border-radius:16px 20px 15px 20px;box-shadow:3px 4px #111;padding:4px 12px;color:#fff;font-weight:800;transform:rotate(-1deg);margin-bottom:12px}
+#game-builder-checkboxes h2{font-size:24px;line-height:1.2;margin:4px 0;font-weight:800;color:inherit}
+#game-builder-checkboxes h3{font-size:18px;font-weight:700;margin:0}
+#game-builder-checkboxes p{margin:0}
+#game-builder-checkboxes .series{font-size:12px;color:#c1cede}
+#game-builder-checkboxes .tag{font-size:12px;color:#fff;background:#465a75;padding:5px 10px;border-radius:7px}
+#game-builder-checkboxes .content{padding:24px}
+#game-builder-checkboxes .topline{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+#game-builder-checkboxes .tabs{display:flex;gap:8px}
+#game-builder-checkboxes button{font:700 14px 'Segoe UI',sans-serif;min-height:42px;padding:9px 16px;border:1px solid var(--line);border-radius:9px;color:var(--ink);background:var(--paper)}
+#game-builder-checkboxes button[aria-pressed=true],#game-builder-checkboxes .primary{background:#4e86d8;color:#fff;border-color:#4e86d8}
+#game-builder-checkboxes button:focus-visible,#game-builder-checkboxes input:focus-visible,#game-builder-checkboxes select:focus-visible{outline:3px solid #efc24f;outline-offset:3px}
+#game-builder-checkboxes .workspace{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(240px,1fr);gap:22px;align-items:start}
+#game-builder-checkboxes .play{min-width:0}
+#game-builder-checkboxes .screen{background:#101c2d;color:#e0e8f4;border:3px solid #111;border-radius:13px;overflow:hidden}
+#game-builder-checkboxes .hud{display:flex;justify-content:space-between;gap:10px;padding:12px 16px;font:700 12px 'Segoe UI',sans-serif;flex-wrap:wrap}
+#game-builder-checkboxes canvas{display:block;width:100%;height:auto;touch-action:none}
+#game-builder-checkboxes .play-actions{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}
+#game-builder-checkboxes .movement{display:flex;gap:6px}
+#game-builder-checkboxes .small{font-size:12px;color:light-dark(#63748b,#acbdd3)}
+#game-builder-checkboxes .status{margin-top:10px;min-height:36px}
+#game-builder-checkboxes .rules{background:var(--paper);padding:20px;border:1px solid var(--line);border-radius:13px}
+#game-builder-checkboxes label{display:grid;gap:6px;margin-top:15px;font-size:14px;font-weight:600}
+#game-builder-checkboxes .label-row{display:flex;justify-content:space-between;gap:10px}
+#game-builder-checkboxes input[type=number],#game-builder-checkboxes select{font:400 14px 'Segoe UI',sans-serif;width:100%;min-height:39px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:7px;padding:7px 10px}
+#game-builder-checkboxes input[type=range]{width:100%;accent-color:#4e86d8}
+#game-builder-checkboxes .compare{margin-top:22px;border-left:5px solid #efc24f;background:var(--paper);padding:14px 18px;border-radius:0 10px 10px 0}
+#game-builder-checkboxes .compare p{margin-top:5px}
+#game-builder-checkboxes footer{text-align:center;padding:0 12px 18px;font-size:12px;color:light-dark(#63748b,#acbdd3)}
+@media(max-width:650px){#game-builder-checkboxes .workspace{grid-template-columns:1fr}#game-builder-checkboxes .content{padding:16px}#game-builder-checkboxes header{padding:16px}#game-builder-checkboxes header .tag{display:none}}
+#game-builder-checkboxes .screen{position:relative}
+#game-builder-checkboxes .name-entry{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center;background:#101c2d;color:#e0e8f4;font-family:monospace}
+#game-builder-checkboxes .name-entry[hidden]{display:none}
+#game-builder-checkboxes .name-entry h3{color:#efc24f;font:700 23px monospace}
+#game-builder-checkboxes .name-entry label{margin:0;color:#e0e8f4}
+#game-builder-checkboxes .name-entry input{width:150px;min-height:52px;text-align:center;letter-spacing:10px;text-transform:uppercase;font:700 28px monospace;color:#efc24f;background:#172b45;border:2px solid #9cbcf2;border-radius:6px}
+#game-builder-checkboxes .name-entry button{color:#101c2d;background:#efc24f;border:0}
+#game-builder-checkboxes [hidden]{display:none!important}
+#game-builder-checkboxes .check-rule{display:flex;align-items:center;gap:10px;font-weight:700}
+#game-builder-checkboxes .check-rule input{width:19px;height:19px;accent-color:#4e86d8;margin:0}
+#game-builder-checkboxes .rule-detail{margin-top:9px;padding-left:29px}
+#game-builder-checkboxes .workspace{display:flex;flex-direction:column;gap:18px}
+#game-builder-checkboxes .play{width:100%;max-width:720px;margin:0 auto}
+#game-builder-checkboxes .rules-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;width:100%;align-items:start}
+#game-builder-checkboxes .rules{min-width:0;padding:18px;border-top:4px solid #8f79d8}
+#game-builder-checkboxes .rules:nth-child(2){border-top-color:#efc24f}
+#game-builder-checkboxes .rules:nth-child(3){border-top-color:#4e86d8}
+#game-builder-checkboxes .rules .check-rule{margin:0;min-height:27px}
+#game-builder-checkboxes .rules .rule-detail{padding:0;margin-top:15px}
+#game-builder-checkboxes .end-buttons{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+@media(max-width:700px){#game-builder-checkboxes .rules-grid{grid-template-columns:1fr}}
+#game-builder-checkboxes .rules-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+#game-builder-checkboxes .rules:nth-child(4){border-top-color:#2e9c70}
+@media(max-width:900px){#game-builder-checkboxes .rules-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:550px){#game-builder-checkboxes .rules-grid{grid-template-columns:1fr}}
+#game-builder-checkboxes .rules-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+#game-builder-checkboxes .rules-stack{display:grid;gap:16px;min-width:0}
+#game-builder-checkboxes .rules[aria-label="Lives rules"]{border-top-color:#8f79d8}
+#game-builder-checkboxes .rules[aria-label="Scoring rules"]{border-top-color:#efc24f}
+#game-builder-checkboxes .rules[aria-label="Challenge rules"]{border-top-color:#4e86d8}
+#game-builder-checkboxes .rules[aria-label="Other Rules"]{border-top-color:#2e9c70}
+@media(max-width:650px){#game-builder-checkboxes .rules-grid{grid-template-columns:1fr}}
+#game-builder-checkboxes .rules-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:900px){#game-builder-checkboxes .rules-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:550px){#game-builder-checkboxes .rules-grid{grid-template-columns:1fr}}
+</style>
+<header><div><div class="brand">Cheesestick Labs</div><div class="series">Video Games: Their History and Design</div><h2>What's The Point(s)?</h2></div><span class="tag">Builder preview</span></header>
+<div class="content">
+<div class="topline"><div><h3>Build your Space Invaders</h3><p class="small">Game A · Table 1</p></div><div class="tabs" aria-label="Version"><button type="button" class="cursor-interaction" data-mode="arcade" aria-pressed="true">Arcade</button><button type="button" class="cursor-interaction" data-mode="home" aria-pressed="false">Home</button></div></div>
+<div class="workspace">
+<section class="play" aria-label="Playable game preview"><div class="screen"><div class="hud"><span data-hud="score">SCORE 0</span><span data-hud="lives">LIVES 3</span><span data-hud="wave">WAVE 1</span></div><canvas width="600" height="365" aria-label="Space Invaders preview. Use the buttons below to move and shoot."></canvas><form class="name-entry" data-name-entry hidden><h3>ENTER YOUR INITIALS</h3><p data-run-score></p><label>3 letters<input data-initials aria-label="Your three initials" maxlength="3" minlength="3" pattern="[A-Za-z]{3}" autocomplete="off" required placeholder="___"></label><button class="cursor-interaction" type="submit">Add to high scores</button></form><section class="name-entry" data-end-screen hidden aria-label="End of game"><h3 data-end-title>GAME OVER</h3><p data-end-score></p><div class="end-buttons"><button type="button" class="cursor-interaction" data-end-continue>Insert quarter to continue</button><button type="button" class="cursor-interaction" data-end-finish>High scores</button></div></section></div>
+<div class="play-actions"><button type="button" class="primary cursor-interaction" data-action="start">Play test</button><div class="movement"><button type="button" class="cursor-interaction" data-action="left" aria-label="Move left">←</button><button type="button" class="cursor-interaction" data-action="fire">Fire</button><button type="button" class="cursor-interaction" data-action="right" aria-label="Move right">→</button></div></div>
+<p class="small status" aria-live="polite" data-status>Choose your rules, then enter a simulated quarter to start.</p></section>
+<div class="rules-grid">
+<section class="rules" aria-label="Lives rules">
+<label class="check-rule"><input type="checkbox" data-setting="limitedLives" checked>Use limited lives</label>
+<div data-lives-detail>
+<label class="rule-detail"><span data-lives-label>Lives per quarter</span><input data-setting="lives" type="number" min="1" max="9" value="3"></label>
+<label data-extra-life-detail>Earn an extra life<select data-setting="extraLifeEvery"><option value="0">Never</option><option value="1000">Every 1,000 points</option><option value="3000">Every 3,000 points</option><option value="5000">Every 5,000 points</option></select></label>
+
+</div>
+</section>
+<section class="rules" aria-label="Scoring rules">
+<label class="check-rule"><input type="checkbox" data-setting="useScore" checked>Use a score</label>
+<div data-score-detail>
+<label>Enemy points<select data-setting="pointsMode"><option value="flat">Same for every enemy</option><option value="rows">More for higher rows</option></select></label>
+<label class="rule-detail"><span data-points-label>Points per enemy</span><input data-setting="points" type="number" min="10" max="1000" step="10" value="100"></label>
+<p class="small" data-row-points hidden>Middle row ×2 · Top row ×3</p>
+<label>Wave-clear bonus<input data-setting="waveBonus" type="number" min="0" max="5000" step="100" value="0"></label>
+</div>
+</section>
+<section class="rules" aria-label="Challenge rules"><h3>Challenge</h3>
+<label><span class="label-row"><span>Enemy speed</span><output data-speed-label>2 / 5</output></span><input data-setting="speed" type="range" min="1" max="5" step="1" value="2"></label>
+<label>Speed change after each wave<select data-setting="ramp"><option value="0">Stay the same</option><option value="10" selected>10% faster</option><option value="25">25% faster</option></select></label>
+<label>Enemy firing frequency<select data-setting="fireRate"><option value="3">Low</option><option value="1.4" selected>Medium</option><option value="0.6">High</option></select></label>
+<label class="check-rule" style="margin-top:15px"><input type="checkbox" data-setting="useShields" checked>Use shields</label>
+<label data-shield-detail>Between waves, shields<select data-setting="shieldReset"><option value="wave">Rebuild completely</option><option value="never">Keep their damage</option></select></label>
+<label data-respawn-detail hidden>After a hit<select data-setting="respawn"><option value="restart">Respawn at wave 1</option><option value="continue" selected>Respawn at current wave</option></select></label>
+</section><section class="rules" aria-label="Other Rules"><h3>Other Rules</h3>
+<label>After losing, show<select data-setting="endScreen"><option value="gameover">Game Over</option><option value="scores">High scores</option><option value="both" selected>Game Over, then high scores</option><option value="title">Return to start screen</option></select></label>
+<label><span data-death-label>Allow continuing?</span><select data-setting="failure"><option value="restart">No — start a new game</option><option value="continue">Yes — insert a quarter</option></select></label>
+<div data-continue-detail>
+<label>Continue from<select data-setting="continueAt"><option value="current">Current wave</option><option value="restart">Wave 1</option></select></label>
+<label data-continue-score-detail>Score when continuing<select data-setting="continueScore"><option value="keep">Keep it</option><option value="reset">Reset to zero</option></select></label>
+</div>
+</section></div></div>
+
+</div><footer>By Cheesestick Labs</footer>
+<script>
+(()=>{
+const params=new URLSearchParams(location.search),period=params.get('period')||'',group=params.get('group')||'',game=location.pathname.includes('space-invaders')?'a':'b',playtest=params.get('playtest')==='1';
+const key='cheesestick-build-'+period+'-'+group+'-'+game;
+let snapshot=null;try{snapshot=JSON.parse(playtest?decodeURIComponent(location.hash.slice(1)):localStorage.getItem(key)||'null');}catch{}
+if(snapshot?.modelContent?.versions){
+const clean={};for(const mode of ['arcade','home']){clean[mode]={};const config=snapshot.modelContent.versions[mode]||{};document.querySelectorAll('[data-setting]').forEach(el=>{const k=el.dataset.setting,v=config[k];if(v===undefined)return;if(el.type==='checkbox'){if(typeof v==='boolean')clean[mode][k]=v;}else if(el.tagName==='SELECT'){if([...el.options].some(o=>o.value===String(v)))clean[mode][k]=v;}else{const n=Number(v),min=el.min?Number(el.min):0,max=el.max?Number(el.max):10000;if(Number.isFinite(n)&&n>=min&&n<=max)clean[mode][k]=n;}});}
+snapshot={modelContent:{...snapshot.modelContent,mode:snapshot.modelContent.mode==='home'?'home':'arcade',versions:clean},privateContent:{homeBest:Math.max(0,Math.min(1e9,Number(snapshot.privateContent?.homeBest)||0))}};
+}
+window.openai={widgetState:snapshot,setWidgetState:async value=>{window.openai.widgetState=value;if(!playtest){try{localStorage.setItem(key,JSON.stringify(value));}catch{}}}};
+document.documentElement.style.colorScheme=params.get('theme')==='dark'?'dark':'light';
+const groupLine=document.querySelector('.topline .small');if(groupLine)groupLine.textContent=(playtest?'Playtest · ':'')+'Period '+period+' · Group '+group+' · Game '+game.toUpperCase();
+const postHeight=()=>parent.postMessage({type:'builder-height',height:Math.ceil(document.body.getBoundingClientRect().height)},location.origin);
+new ResizeObserver(postHeight).observe(document.body);window.addEventListener('load',postHeight);
+if(playtest)document.querySelectorAll('[data-setting]').forEach(el=>el.disabled=true);
+})();
+</script>
+<script>
+(()=>{
+const root=document.getElementById('game-builder-checkboxes'), canvas=root.querySelector('canvas'),ctx=canvas.getContext('2d');
+const sharedDefaults={extraLifeEvery:0,pointsMode:'flat',waveBonus:0,fireRate:1.4,useShields:true,shieldReset:'wave',continueAt:'current',continueScore:'keep'};
+const defaults={arcade:{...sharedDefaults,endScreen:'both',respawn:'continue',useScore:true,limitedLives:true,lives:3,speed:4,ramp:10,points:100,failure:'restart'},home:{...sharedDefaults,endScreen:'gameover',respawn:'continue',useScore:true,limitedLives:true,lives:5,speed:2,ramp:10,points:100,failure:'continue'}};
+let mode='arcade',versions=structuredClone(defaults),running=false,raf=0,last=0,player=300,enemies=[],bullets=[],shots=[],dir=1,score=0,lives=3,wave=1,shotClock=0,immune=0,highScore=12000,enteringName=false,lastEntry=null;
+let homeBest=Number(window.openai?.widgetState?.privateContent?.homeBest)||0;
+let shields=[],extraLifeProgress=0;
+let board=[{name:'OZZ',score:12000},{name:'MTY',score:8500},{name:'PNO',score:6200}];
+const status=root.querySelector('[data-status]');
+const saved=window.openai?.widgetState?.modelContent;
+if(saved?.versions?.arcade && saved?.versions?.home){versions=saved.versions;mode=saved.mode==='home'?'home':'arcade';}
+for(const m of ['arcade','home'])versions[m]={...defaults[m],...versions[m]};
+function persist(){window.openai?.setWidgetState?.({modelContent:{mode,versions},privateContent:{homeBest}}).catch(()=>{});}
+function buildShields(){
+shields=[];
+if(!versions[mode].useShields)return;
+for(const center of [90,230,370,510])for(let row=0;row<5;row++)for(let col=0;col<10;col++){
+if(row===0&&(col===0||col===9))continue;
+if(row>=3&&col>=3&&col<=6)continue;
+shields.push({x:center-35+col*7,y:270+row*6,w:7,h:6});
+}
+}
+function hitShield(shot,upward){
+const old=shot.prevY??shot.y;
+const top=Math.min(old,shot.y),bottom=Math.max(old,shot.y)+12;
+const candidates=shields.filter(b=>shot.x+3>=b.x&&shot.x-3<=b.x+b.w&&bottom>=b.y&&top<=b.y+b.h);
+if(!candidates.length)return false;
+candidates.sort((a,b)=>upward?b.y-a.y:a.y-b.y);
+const impact=candidates[0],cx=shot.x,cy=upward?impact.y+impact.h:impact.y;
+shields=shields.filter(b=>Math.hypot(b.x+b.w/2-cx,b.y+b.h/2-cy)>11);
+return true;
+}
+function spawn(){enemies=[];for(let r=0;r<3;r++)for(let c=0;c<8;c++)enemies.push({x:85+c*54,y:48+r*38,row:r});dir=1;shots=[];bullets=[];shotClock=0;}
+function hud(){root.querySelector('[data-hud=score]').hidden=!versions[mode].useScore;root.querySelector('[data-hud=lives]').hidden=!versions[mode].limitedLives;for(const [key,val] of Object.entries({score:'SCORE '+score,lives:'LIVES '+lives,wave:'WAVE '+wave}))root.querySelector('[data-hud="'+key+'"]').textContent=val;}
+function drawScene(){ctx.fillStyle='#101c2d';ctx.fillRect(0,0,600,365);ctx.fillStyle='#273b55';for(let i=0;i<35;i++)ctx.fillRect((i*137+19)%600,(i*73+11)%310,2,2);ctx.fillStyle='#9cbcf2';enemies.forEach(e=>{ctx.fillStyle=versions[mode].pointsMode==='rows'?['#c0a4ef','#9cbcf2','#76c99a'][e.row??2]:'#9cbcf2';ctx.fillRect(e.x-12,e.y-8,24,15);ctx.fillRect(e.x-18,e.y-3,36,6);ctx.fillRect(e.x-9,e.y-12,5,5);ctx.fillRect(e.x+4,e.y-12,5,5);ctx.fillStyle='#101c2d';ctx.fillRect(e.x-7,e.y-3,4,4);ctx.fillRect(e.x+3,e.y-3,4,4);ctx.fillStyle='#9cbcf2';});ctx.fillStyle='#76c99a';shields.forEach(b=>ctx.fillRect(b.x,b.y,b.w,b.h));ctx.fillStyle=immune>0?'#acbdd3':'#efc24f';ctx.fillRect(player-17,332,34,11);ctx.fillRect(player-5,324,10,9);ctx.fillStyle='#efc24f';bullets.forEach(b=>ctx.fillRect(b.x-2,b.y,4,12));ctx.fillStyle='#f28c83';shots.forEach(b=>ctx.fillRect(b.x-3,b.y,6,12));ctx.strokeStyle='#43546d';ctx.beginPath();ctx.moveTo(0,352);ctx.lineTo(600,352);ctx.stroke();}
+function draw(){
+if(running){drawScene();return;}
+ctx.fillStyle='#101c2d';ctx.fillRect(0,0,600,365);
+ctx.textAlign='center';
+if(mode==='arcade'){
+if(versions.arcade.useScore){ctx.font='700 15px monospace';ctx.fillStyle='#efc24f';ctx.fillText('HIGH SCORES',300,43);
+ctx.font='16px monospace';ctx.fillStyle='#e0e8f4';
+board.slice(0,3).forEach((r,i)=>ctx.fillText(['1ST','2ND','3RD'][i]+'   '+r.name+'   '+String(r.score).padStart(6,'0'),300,83+i*30));if(lastEntry){ctx.fillStyle='#efc24f';ctx.font='14px monospace';ctx.fillText('YOUR SCORE   '+lastEntry.name+'   '+lastEntry.score,300,178);}}else{ctx.fillStyle='#9cbcf2';ctx.font='700 24px monospace';ctx.fillText('DEFEND THE EARTH',300,100);ctx.fillStyle='#acbdd3';ctx.font='15px monospace';ctx.fillText('HOW LONG CAN YOU LAST?',300,143);}
+ctx.fillStyle='#9cbcf2';ctx.font='700 27px monospace';ctx.fillText('SPACE INVADERS',300,217);
+ctx.fillStyle='#efc24f';ctx.font='700 18px monospace';ctx.fillText(lives<=0&&versions.arcade.failure==='continue'?'INSERT COIN TO CONTINUE':'ENTER QUARTER TO START',300,269);
+ctx.fillStyle='#acbdd3';ctx.font='14px monospace';ctx.fillText(versions.arcade.limitedLives?'25¢ = '+versions.arcade.lives+' LIVES':'25¢ TO START · UNLIMITED RESPAWNS',300,302);
+ctx.fillText('SIMULATED QUARTER · NO REAL PAYMENT',300,337);
+}else{
+ctx.fillStyle='#9cbcf2';ctx.font='700 34px monospace';ctx.fillText('SPACE',300,109);ctx.fillText('INVADERS',300,153);
+ctx.fillStyle='#acbdd3';ctx.font='15px monospace';if(versions.home.useScore){ctx.fillStyle='#efc24f';ctx.fillText('YOUR TOP SCORE: '+homeBest,300,195);}
+ctx.fillStyle='#efc24f';ctx.font='700 19px monospace';ctx.fillText('PRESS SPACE TO START!',300,257);
+ctx.fillStyle='#acbdd3';ctx.font='14px monospace';ctx.fillText('Or use the start button below',300,298);
+}
+}
+function startLabel(){return mode==='arcade'?(lives<=0&&versions.arcade.failure==='continue'?'Insert coin to continue':'Enter quarter to start'):'Press Space to start!';}
+
+function reset(){root.querySelector('[data-end-screen]').hidden=true;enteringName=false;root.querySelector('[data-name-entry]').hidden=true;root.querySelector('[data-action=start]').disabled=false;cancelAnimationFrame(raf);running=false;score=0;extraLifeProgress=0;wave=1;lives=Number(versions[mode].lives);player=300;immune=0;buildShields();spawn();hud();draw();root.querySelector('[data-action=start]').textContent=startLabel();}
+function render(){
+const s=versions[mode];
+root.querySelector('[data-lives-detail]').hidden=!s.limitedLives;
+root.querySelector('[data-score-detail]').hidden=!s.useScore;
+root.querySelector('[data-respawn-detail]').hidden=s.limitedLives;
+root.querySelector('[data-extra-life-detail]').hidden=!(s.limitedLives&&s.useScore);
+root.querySelector('[data-shield-detail]').hidden=!s.useShields;
+root.querySelector('[data-continue-detail]').hidden=s.failure!=='continue';
+root.querySelector('[data-continue-score-detail]').hidden=!s.useScore;
+root.querySelector('[data-points-label]').textContent=s.pointsMode==='rows'?'Base points (bottom row)':'Points per enemy';
+root.querySelector('[data-row-points]').hidden=s.pointsMode!=='rows';
+root.querySelector('[data-lives-label]').textContent=mode==='arcade'?'Lives per quarter':'Starting lives';
+root.querySelector('[data-death-label]').textContent='Allow continuing?';
+root.querySelector('[data-setting=failure]').querySelector('[value=continue]').textContent=mode==='arcade'?'Yes — insert a quarter':'Yes — continue for free';
+const endSelect=root.querySelector('[data-setting=endScreen]');
+endSelect.querySelector('[value=scores]').disabled=!s.useScore;
+endSelect.querySelector('[value=both]').disabled=!s.useScore;
+endSelect.querySelector('[value=scores]').textContent=mode==='arcade'?'High scores':'Your top score';
+endSelect.querySelector('[value=both]').textContent=mode==='arcade'?'Game Over, then high scores':'Game Over, then your top score';
+if(!s.useScore&&['scores','both'].includes(s.endScreen))s.endScreen='gameover';
+root.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
+root.querySelectorAll('[data-setting]').forEach(el=>{if(el.type==='checkbox')el.checked=Boolean(s[el.dataset.setting]);else el.value=s[el.dataset.setting];});
+root.querySelector('[data-speed-label]').textContent=s.speed+' / 5';reset();
+}
+function showNameEntry(){
+enteringName=true;root.querySelector('[data-end-screen]').hidden=true;
+root.querySelector('[data-name-entry]').hidden=false;root.querySelector('[data-run-score]').textContent='YOUR SCORE: '+score;
+const input=root.querySelector('[data-initials]');input.value='';root.querySelector('[data-action=start]').disabled=true;input.focus();
+}
+function finishRun(){
+const s=versions[mode];root.querySelector('[data-end-screen]').hidden=true;
+if(s.useScore&&['scores','both'].includes(s.endScreen)){
+if(mode==='arcade'){showNameEntry();return;}
+enteringName=true;root.querySelector('[data-end-screen]').hidden=false;
+root.querySelector('[data-end-title]').textContent='YOUR TOP SCORE';
+root.querySelector('[data-end-score]').textContent=homeBest+' · THIS RUN: '+score;
+root.querySelector('[data-end-continue]').hidden=s.failure!=='continue';
+root.querySelector('[data-end-continue]').textContent='Continue';
+root.querySelector('[data-end-finish]').textContent='Return to title';
+root.querySelector('[data-end-finish]').onclick=returnToTitle;
+return;
+}returnToTitle();
+}
+function returnToTitle(){enteringName=false;root.querySelector('[data-end-screen]').hidden=true;root.querySelector('[data-action=start]').disabled=false;draw();}
+function endRun(){
+const s=versions[mode];draw();
+if(['gameover','both'].includes(s.endScreen)){
+enteringName=true;root.querySelector('[data-end-screen]').hidden=false;
+root.querySelector('[data-end-title]').textContent='GAME OVER';
+root.querySelector('[data-end-score]').textContent=s.useScore?'YOUR SCORE: '+score:'';
+root.querySelector('[data-end-continue]').hidden=s.failure!=='continue';
+root.querySelector('[data-end-continue]').textContent=mode==='arcade'?'Insert quarter to continue':'Continue';
+root.querySelector('[data-end-finish]').textContent=s.endScreen==='both'?(mode==='arcade'?'High scores':'Your top score'):'Return to title';
+root.querySelector('[data-end-finish]').onclick=finishRun;
+root.querySelector('[data-action=start]').disabled=true;
+}else finishRun();
+}
+root.querySelector('[data-end-continue]').onclick=()=>{enteringName=false;root.querySelector('[data-end-screen]').hidden=true;root.querySelector('[data-action=start]').disabled=false;startTest();};
+
+function fire(){if(running&&bullets.length<4)bullets.push({x:player,y:320});}
+const keys={};
+function addPoints(amount){
+const s=versions[mode];
+if(!s.useScore||amount<=0)return;
+score+=amount;highScore=Math.max(highScore,score);
+if(mode==='home'&&score>homeBest){homeBest=score;persist();}
+if(s.limitedLives&&Number(s.extraLifeEvery)>0){
+extraLifeProgress+=amount;
+const earned=Math.floor(extraLifeProgress/Number(s.extraLifeEvery));
+if(earned){lives+=earned;extraLifeProgress%=Number(s.extraLifeEvery);status.textContent='Extra life earned! '+lives+' lives remaining.';}
+}
+}
+function advanceWave(){
+const s=versions[mode];addPoints(Number(s.waveBonus));wave++;
+if(s.shieldReset==='wave')buildShields();
+spawn();status.textContent='Wave '+wave+' · '+s.ramp+'% speed increase'+(s.useScore&&Number(s.waveBonus)>0?' · '+s.waveBonus+' bonus points':'')+'.';
+}
+function tick(now){
+if(!running)return;
+const dt=Math.min((now-last)/1000,.04);last=now;
+const s=versions[mode],speed=Number(s.speed)*17*Math.pow(1+Number(s.ramp)/100,wave-1);
+immune=Math.max(0,immune-dt);
+player=Math.max(22,Math.min(578,player+((keys.right?1:0)-(keys.left?1:0))*270*dt));
+enemies.forEach(e=>e.x+=dir*speed*dt);
+if(enemies.some(e=>e.x>575||e.x<25)){dir*=-1;enemies.forEach(e=>{e.x=Math.max(26,Math.min(574,e.x));e.y+=18;});}
+bullets.forEach(b=>{b.prevY=b.y;b.y-=380*dt;});
+shots.forEach(b=>{b.prevY=b.y;b.y+=(115+Number(s.speed)*18)*dt;});
+shotClock+=dt;
+if(shotClock>=Number(s.fireRate)&&enemies.length){
+shotClock=0;
+// Only the frontmost enemy in a column fires through that column.
+const front=enemies.filter(e=>!enemies.some(other=>Math.abs(other.x-e.x)<10&&other.y>e.y));
+const e=front[Math.floor(Math.random()*front.length)];
+shots.push({x:e.x,y:e.y});
+}
+bullets=bullets.filter(b=>{
+if(b.y<0||hitShield(b,true))return false;
+const i=enemies.findIndex(e=>Math.abs(e.x-b.x)<20&&Math.abs(e.y-b.y)<17);
+if(i<0)return true;
+const enemy=enemies[i];enemies.splice(i,1);
+const multiplier=s.pointsMode==='rows'?3-(enemy.row??2):1;
+addPoints(Number(s.points)*multiplier);return false;
+});
+shots=shots.filter(b=>!hitShield(b,false));
+shields=shields.filter(b=>!enemies.some(e=>Math.abs(e.x-(b.x+b.w/2))<20&&Math.abs(e.y-(b.y+b.h/2))<16));
+const invaded=enemies.some(e=>e.y>306);
+const hit=shots.some(b=>Math.abs(b.x-player)<21&&b.y>318&&b.y<349)||invaded;
+shots=shots.filter(b=>b.y<365);
+if(hit&&immune===0){
+if(s.limitedLives)lives--;
+else{
+player=300;
+if(s.respawn==='restart'){wave=1;score=0;extraLifeProgress=0;buildShields();spawn();}
+status.textContent='Hit! Respawned at '+(s.respawn==='restart'?'wave 1.':'the current wave.');
+}
+immune=1.5;shots=[];
+if(invaded)spawn();
+if(lives<=0){
+running=false;hud();endRun();
+status.textContent=s.failure==='continue'?(mode==='arcade'?'Insert another simulated quarter to continue.':'Start again to continue.'):(mode==='arcade'?'Game over. Enter another simulated quarter to start a new game.':'Game over. Press Space to start a new game.');
+root.querySelector('[data-action=start]').textContent=startLabel();return;
+}
+}
+if(!enemies.length)advanceWave();
+hud();draw();raf=requestAnimationFrame(tick);
+}
+
+root.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;render();status.textContent='Switched versions. Each version keeps its own rules and start screen.';persist();});
+root.querySelectorAll('[data-setting]').forEach(el=>el.onchange=()=>{const k=el.dataset.setting;let v=el.type==='checkbox'?el.checked:el.value;if(el.type!=='checkbox'&&!['failure','endScreen','respawn','pointsMode','shieldReset','continueAt','continueScore'].includes(k)){v=Math.max(Number(el.min||0),Math.min(Number(el.max||1000),Number(v)||Number(el.min||0)));}versions[mode][k]=v;render();status.textContent='Rules updated. Test reset with your new settings.';persist();});
+function startTest(){
+if(enteringName)return;
+if(running){reset();status.textContent='Test reset. Your rules are unchanged.';return;}
+const s=versions[mode];
+if(lives<=0){
+lives=Number(s.lives);player=300;immune=1.5;shots=[];bullets=[];shotClock=0;
+const continuing=s.failure==='continue';
+if(!continuing||s.continueAt==='restart'){wave=1;buildShields();spawn();}
+if(!continuing||s.continueScore==='reset'){score=0;extraLifeProgress=0;}
+}
+running=true;last=performance.now();root.querySelector('[data-action=start]').textContent='Restart test';
+status.textContent=(mode==='arcade'?'Simulated quarter entered. ':'')+'Use arrows to move and Space to fire, or use the buttons.';
+hud();raf=requestAnimationFrame(tick);
+}
+root.querySelector('[data-action=start]').onclick=startTest;
+for(const action of ['left','right']){const b=root.querySelector('[data-action='+action+']');b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);keys[action]=true;};b.onpointerup=b.onpointercancel=()=>keys[action]=false;}
+root.querySelector('[data-action=fire]').onclick=fire;
+canvas.onpointermove=e=>{if(running){const r=canvas.getBoundingClientRect();player=Math.max(22,Math.min(578,(e.clientX-r.left)*600/r.width));}};canvas.onpointerdown=e=>{e.preventDefault();fire();};
+let active=false;root.onpointerenter=()=>active=true;root.onpointerleave=()=>{active=false;keys.left=keys.right=false;};
+document.addEventListener('keydown',e=>{if(!active||/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName))return;if(['ArrowLeft','ArrowRight','Space'].includes(e.code)){e.preventDefault();if(e.code==='Space'){if(running)fire();else if(mode==='home'&&!e.repeat)startTest();}else keys[e.code==='ArrowLeft'?'left':'right']=true;}});
+document.addEventListener('keyup',e=>{if(e.code==='ArrowLeft')keys.left=false;if(e.code==='ArrowRight')keys.right=false;});
+window.addEventListener('openai:set_globals',e=>{const incoming=e.detail?.globals?.widgetState;if(Number.isFinite(incoming?.privateContent?.homeBest))homeBest=Math.max(homeBest,incoming.privateContent.homeBest);const s=incoming?.modelContent;if(s?.versions?.arcade&&s?.versions?.home){versions={arcade:{...defaults.arcade,...s.versions.arcade},home:{...defaults.home,...s.versions.home}};mode=s.mode==='home'?'home':'arcade';render();}});
+root.querySelector('[data-name-entry]').onsubmit=e=>{e.preventDefault();const input=root.querySelector('[data-initials]');const name=input.value.trim().toUpperCase();if(!/^[A-Z]{3}$/.test(name)){input.setCustomValidity('Enter three letters.');input.reportValidity();return;}input.setCustomValidity('');lastEntry={name,score};board.push(lastEntry);board.sort((a,b)=>b.score-a.score);enteringName=false;root.querySelector('[data-name-entry]').hidden=true;root.querySelector('[data-action=start]').disabled=false;draw();status.textContent='Score recorded. '+(versions.arcade.failure==='continue'?'Insert another simulated coin to continue.':'Enter another simulated quarter to play again.');};
+root.querySelector('[data-initials]').oninput=e=>{e.target.setCustomValidity('');e.target.value=e.target.value.replace(/[^a-z]/gi,'').toUpperCase();};
+render();persist();
+})();
+</script>
+</div>
+
+
+
+
+
+
+<script>if(new URLSearchParams(location.search).get('playtest')==='1'){document.body.setAttribute('data-playtest','');document.querySelector('.rules-grid').hidden=true;}</script></body></html>
